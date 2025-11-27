@@ -53,6 +53,8 @@ public class InteractableGeneral : MonoBehaviour, IPointerDownHandler, IPointerE
 
         onFirstInteract.AddListener(ParentPulse);
 
+        //Debug.Log("pressed.");
+
         if (eventRelay != null)
         {
             onPrimaryInteract.AddListener(RelayOnPrimaryInteract);
@@ -101,73 +103,73 @@ public class InteractableGeneral : MonoBehaviour, IPointerDownHandler, IPointerE
     public void ParentPulseUp()
     {
         if(transform.parent != null)
-            gameObject.transform.parent.SendMessage("PulseUp", SendMessageOptions.DontRequireReceiver);
+            gameObject.transform.parent.SendMessage("PulseUp", SendMessageOptions.DontRequireReceiver); Debug.Log("pressed.");
     }
 
     public void ParentPulseDown()
     {
         if (transform.parent != null)
-            gameObject.transform.parent.SendMessage("PulseDown", SendMessageOptions.DontRequireReceiver);
+            gameObject.transform.parent.SendMessage("PulseDown", SendMessageOptions.DontRequireReceiver); Debug.Log("pressed.");
     }
 
     public void ParentPulse()
     {
         if (transform.parent != null)
-            gameObject.transform.parent.SendMessage("Pulse", SendMessageOptions.DontRequireReceiver);
+            gameObject.transform.parent.SendMessage("Pulse", SendMessageOptions.DontRequireReceiver); Debug.Log("pressed.");
     }
 
     public void LoadScene(string newScene)
     {
-        GenUtils.LoadScene(newScene);
+        GenUtils.LoadScene(newScene); Debug.Log("pressed.");
     }
 
     public void RelayOnPrimaryInteract()
     {
         if (eventRelay != null)
-            eventRelay.onPrimaryInteract.Invoke();
+            eventRelay.onPrimaryInteract.Invoke(); Debug.Log("pressed.");
     }
 
     public void RelayOnFirstInteract()
     {
         if (eventRelay != null)
-            eventRelay.onFirstInteract.Invoke();
+            eventRelay.onFirstInteract.Invoke(); Debug.Log("pressed.");
     }
 
     public void RelayOnPrimaryInteractLift()
     {
         if (eventRelay != null)
-            eventRelay.onPrimaryInteractLift.Invoke();
+            eventRelay.onPrimaryInteractLift.Invoke(); Debug.Log("pressed.");
     }
 
     public void RelayOnHoverEnter()
     {
         if (eventRelay != null)
-            eventRelay.onHoverEnter.Invoke();
+            eventRelay.onHoverEnter.Invoke(); Debug.Log("pressed.");
     }
 
     public void RelayOnHoverExit()
     {
         if (eventRelay != null)
-            eventRelay.onHoverExit.Invoke();
+            eventRelay.onHoverExit.Invoke(); Debug.Log("pressed.");
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        onPrimaryInteract.Invoke();
+        onPrimaryInteract.Invoke(); Debug.Log("pressed.");
         Pulse();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         Debug.Log("OnPointerEnter: " + gameObject.name);        
-        onHoverEnter.Invoke();
+        onHoverEnter.Invoke(); Debug.Log("pressed.");
         PulseUp();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         Debug.Log("OnPointerExit: " + gameObject.name);
-        onHoverExit.Invoke();
+        onHoverExit.Invoke(); Debug.Log("pressed.");
         PulseDown();
     }
 
