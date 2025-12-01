@@ -5,14 +5,8 @@ public class DogFeedPunisher : MonoBehaviour
     public GameObject dropPrefab;    // 砸家具的物体 Prefab
     public Transform dropPoint;      // 掉落位置（在家具上方）
 
-    private bool fedToday = false;   // 今天有没有被吸附（喂过）
-    private int daysSinceStart = 0;  // 从游戏开始已经过了多少天
-
-    private void Start()
-    {
-        // 第一天默认算喂过，避免刚开局就惩罚
-        fedToday = true;
-    }
+    // 这一“天”内是否喂过狗
+    private bool fedToday = false;
 
     private void OnEnable()
     {
@@ -27,32 +21,28 @@ public class DogFeedPunisher : MonoBehaviour
     }
 
     /// <summary>
-    /// 有物品被 Magnet Snap 吸附时，在 onSnap 事件里调用
+    /// 喂食成功时调用（比如在磁吸 onSnap 或 FoodBowlTrigger 里调用）
     /// </summary>
     public void OnItemSnapped()
     {
         fedToday = true;
-        // Debug.Log("今天有东西被吸附，算喂过狗了");
+        Debug.Log("【DogFeedPunisher】记录：今天已经喂过狗了");
     }
 
+    /// <summary>
+    /// 每跨一天由 GameClock 调用
+    /// </summary>
     private void OnDayPassed()
     {
-        daysSinceStart++;
+        Debug.Log($"【DogFeedPunisher】新的一天到来，上一天 fedToday = {fedToday}");
 
-        // 第一天结束只开始计数，不惩罚
-        if (daysSinceStart == 1)
-        {
-            fedToday = false;  // 从第二天开始正式判断
-            return;
-        }
-
-        // 第二天开始，如果当天完全没喂，就砸一次
+        // 如果上一天完全没喂过狗，就触发惩罚
         if (!fedToday)
         {
             TriggerDrop();
         }
 
-        // 新的一天重置
+        // 进入新的一天，重新开始计数
         fedToday = false;
     }
 
@@ -67,7 +57,7 @@ public class DogFeedPunisher : MonoBehaviour
         Vector3 pos = dropPoint ? dropPoint.position : transform.position;
         Quaternion rot = dropPoint ? dropPoint.rotation : Quaternion.identity;
 
-        Debug.Log("【DogFeedPunisher】实例化 damage，一天没喂狗触发惩罚");
+        Debug.Log("【DogFeedPunisher】实例化 damage —— 上一天没喂狗，触发惩罚");
         Instantiate(dropPrefab, pos, rot);
     }
 }
