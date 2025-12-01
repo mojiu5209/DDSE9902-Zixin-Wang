@@ -69,48 +69,44 @@ public class MovableMagnetSnapper : MonoBehaviour
 
     public void HandleSnapping()
     {
+        // 只有在 snapFlag 被置为 false（OnTriggerEnter 通过过滤之后）
+        // 并且 subject 不在移动时才吸附
         if (!snapFlag)
         {
-            if (!subject.moving && subject.myMagnetSnapper == null)
+            if (subject != null && !subject.moving && subject.myMagnetSnapper == null)
             {
-                Vector3 attachPos = snappingPoint.position;
                 subject.myMagnetSnapper = this;
 
-                if (subject.attachPoint == null)
+                // ---- 核心：强制把木棍绑到 snappingPoint 上 ----
+                // 先作为子物体
+                subject.transform.SetParent(snappingPoint);
+
+                // 把局部位置归零，相当于世界坐标 = snappingPoint 的位置
+                subject.transform.localPosition = Vector3.zero;
+
+                // 对齐旋转（如果你勾选了 alignRotation）
+                if (alignRotation)
                 {
-                    subject.transform.parent = snappingPoint;
-                    subject.transform.localPosition = Vector3.zero;
                     subject.transform.rotation = snappingPoint.rotation;
                 }
-                else
-                {
-                    //swap parentage first
-                    subject.attachPoint.parent = null;
-                    subject.transform.parent = subject.attachPoint;
 
-                    //align rotations and positions;
-                    subject.attachPoint.transform.position = attachPos;
-                    subject.attachPoint.transform.rotation = snappingPoint.rotation;
+                // 记录当前局部位置，后面 HandleFixedPos 会持续锁定在这里
+                subjectLocalAttachPos = subject.transform.localPosition;
 
-                    //return parentage
-                    subject.transform.parent = snappingPoint;
-                    subject.attachPoint.parent = snappingPoint.transform;
-                    subjectLocalAttachPos = subject.transform.localPosition;
-                }
-
-                Debug.Log("On Snap!");
+                Debug.Log("On Snap (forced to snappingPoint)!");
                 onSnap.Invoke();
 
+                // 停止物理运动
                 if (subject.myRbody != null)
                 {
                     subject.myRbody.linearVelocity = Vector3.zero;
                     subject.myRbody.useGravity = false;
-                    //r.isKinematic = true;
                 }
 
+                // 标记已经吸附完成
                 snapFlag = true;
             }
-        }        
+        }
     }
 
     public void HandleFixedPos()
